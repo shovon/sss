@@ -1,5 +1,3 @@
-
-
 /**
  * Computes the modulo of a number, such that the result is always positive.
  *
@@ -54,47 +52,47 @@ export const modPow = (
 };
 
 /**
- * Represents a polynomial, where the index represents the power of x.
+ * Generates a cryptographically secure random bigint within a specified range.
  *
- * In other words, the first element is the constant term.
- */
-type Polynomial = bigint[];
-
-/**
- * Creates a polynomial from a list of coefficients.
+ * This function uses the crypto.getRandomValues() API to generate random bytes,
+ * which are then converted to a BigInt. The result is guaranteed to be uniformly
+ * distributed within the specified range [a,b] inclusive.
  *
- * @param coefficients - The coefficients of the polynomial.
- * @returns The polynomial function.
+ * The implementation uses rejection sampling to ensure uniform distribution - if
+ * the generated number is outside the desired range, new random bytes are generated
+ * until a valid number is produced.
+ *
+ * @param a - The lower bound of the range (inclusive)
+ * @param b - The upper bound of the range (inclusive)
+ * @returns A random BigInt n where a ≤ n ≤ b
+ * @throws If either bound is negative
  */
-const polynomial = (coefficients: Polynomial) => (x: bigint) =>
-	coefficients
-		.map((coefficient, index) => coefficient * x ** BigInt(index))
-		.reduce((a, b) => a + b, 0n);
+export const random: (a: bigint, b: bigint) => bigint = (
+	a: bigint,
+	b: bigint
+) => {
+	if (a > b) return random(b, a);
+	if (a < 0n || b < 0n) throw new Error("Range must be positive");
 
+	const range = b - a + 1n; // Calculate the range
+	const bitLength = range.toString(2).length; // Number of bits needed
+	const byteLength = Math.ceil(bitLength / 8); // Bytes needed
 
-const random = (a: bigint, b: bigint) => {
-  if (a > b) return random(b, a);
-	if (a < 0n || b < 0n) throw new Error('Range must be positive');
+	let randomValue;
+	do {
+		// Generate a random BigInt of the correct length
+		const randomBytes = new Uint8Array(byteLength);
+		crypto.getRandomValues(randomBytes);
 
-  const range = b - a + 1n; // Calculate the range
-  const bitLength = range.toString(2).length; // Number of bits needed
-  const byteLength = Math.ceil(bitLength / 8); // Bytes needed
-  
-  let randomValue;
-  do {
-    // Generate a random BigInt of the correct length
-    const randomBytes = new Uint8Array(byteLength);
-    crypto.getRandomValues(randomBytes);
-    
-    // Convert bytes to a BigInt
-    randomValue = BigInt(
-			'0x' + [...randomBytes]
-				.map(b => b.toString(16).padStart(2, '0')).join('')
+		// Convert bytes to a BigInt
+		randomValue = BigInt(
+			"0x" +
+				[...randomBytes].map((b) => b.toString(16).padStart(2, "0")).join("")
 		);
-    
-    // Truncate to fit the bit length
-    randomValue = randomValue & ((1n << BigInt(bitLength)) - 1n);
-  } while (randomValue >= range); // Ensure it's within range
 
-  return randomValue + a; // Map to the desired range
-}
+		// Truncate to fit the bit length
+		randomValue = randomValue & ((1n << BigInt(bitLength)) - 1n);
+	} while (randomValue >= range); // Ensure it's within range
+
+	return randomValue + a; // Map to the desired range
+};
