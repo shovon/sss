@@ -1,0 +1,11 @@
+{
+  "name": "sss",
+  "version": "1.0.0",
+  "description": "Some helpers to implement the SSS scheme",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
