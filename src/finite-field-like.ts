@@ -19,7 +19,7 @@ export const polynomial =
 				.map((coefficient, index) =>
 					modulo(modulo(coefficient, modulus) * x ** BigInt(index), modulus)
 				)
-				.reduce((a, b) => modulo(a + b, modulus), 0n),
+				.reduce((a, b) => modulo(a + b, modulus)),
 			modulus
 		);
 
@@ -40,23 +40,20 @@ export const lagrangePolynomial = (
 	points: [bigint, bigint][],
 	modulus: bigint
 ) => {
-	// inb4, why not use functional programming's
 	const lagrangeBases = points.map(
-		([xj], j) =>
+		([xi, yi], i) =>
 			(x: bigint) =>
-				points.reduce((product, [xm], m) => {
-					if (m === j) {
-						return product;
-					}
-					const nominator = x - xm;
-					const denominator = modPow(xj - xm, -1n, modulus);
-					return modulo(product * nominator * denominator, modulus);
-				}, 1n)
+				points.reduce((product, [xj], j) => {
+					if (i === j) return product;
+					const numerator = modulo(x - xj, modulus);
+					const denominator = modPow(modulo(xi - xj, modulus), -1n, modulus);
+					return modulo(product * numerator * denominator, modulus);
+				}, yi)
 	);
 
 	return (x: bigint) =>
-		points.reduce(
-			(sum, [, yj], j) => modulo(sum + yj * lagrangeBases[j]!(x), modulus),
-			0n
+		modulo(
+			lagrangeBases.reduce((sum, basis) => modulo(sum + basis(x), modulus), 0n),
+			modulus
 		);
 };

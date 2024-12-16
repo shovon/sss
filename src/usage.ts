@@ -23,7 +23,7 @@ export const createShares = (
 	const p = polynomial(
 		[
 			secret,
-			...Array.from({ length: threshold }, () => random(2n, modulus - 1n)),
+			...Array.from({ length: threshold - 1 }, () => random(2n, modulus - 1n)),
 		],
 		modulus
 	);

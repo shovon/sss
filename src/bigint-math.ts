@@ -21,11 +21,14 @@ export const modulo = (a: bigint, b: bigint): bigint => ((a % b) + b) % b;
  * @param b - The second number.
  * @returns The x and y values such that ax + by = gcd(a, b).
  */
-const extendedGcd = (a: bigint, b: bigint): { x: bigint; y: bigint } => {
-	if (a === 0n) return { x: 1n, y: 1n };
-	const { x: x1, y: y1 } = extendedGcd(b % a, a);
-	return { x: y1 - (b / a) * x1, y: x1 };
-};
+export function extendedGcd(
+	a: bigint,
+	b: bigint
+): { gcd: bigint; x: bigint; y: bigint } {
+	if (a === 0n) return { gcd: b, x: 0n, y: 1n };
+	const { gcd, x: x1, y: y1 } = extendedGcd(b % a, a);
+	return { gcd, x: y1 - (b / a) * x1, y: x1 };
+}
 
 /**
  * Computes the modulo of a number, such that the result is always positive.
@@ -41,7 +44,7 @@ export const modPow = (
 	modulus: bigint
 ): bigint => {
 	if (exponent === 0n) return 1n;
-	if (exponent < 1n)
+	if (exponent < 0n)
 		return modPow(
 			modulo(extendedGcd(base, modulus).x, modulus),
 			-exponent,

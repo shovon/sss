@@ -42,6 +42,7 @@ describe("Shamir's Secret Sharing", () => {
 
 			const shares = createShares(secret, { threshold, totalShares }, modulus);
 
+			expect(shares.length).toBe(5);
 			const reconstructedSecret = reconstruct(
 				shares.slice(0, threshold),
 				modulus
@@ -56,7 +57,11 @@ describe("Shamir's Secret Sharing", () => {
 
 			const shares = createShares(secret, { threshold, totalShares }, modulus);
 
-			const reconstructedSecret = reconstruct(shares, modulus);
+			expect(shares.length).toBe(5);
+			const reconstructedSecret = reconstruct(
+				shares.slice(0, threshold),
+				modulus
+			);
 			expect(reconstructedSecret).toBe(secret);
 		});
 
@@ -71,7 +76,10 @@ describe("Shamir's Secret Sharing", () => {
 					{ threshold, totalShares },
 					modulus
 				);
-				const reconstructedSecret = reconstruct(shares, modulus);
+				const reconstructedSecret = reconstruct(
+					shares.slice(0, threshold),
+					modulus
+				);
 				expect(reconstructedSecret).toBe(secret);
 			}
 		});
