@@ -1,8 +1,29 @@
 {
-	"name": "sss",
+	"name": "shamsecsha",
 	"version": "1.0.0",
 	"description": "Some helpers to implement the SSS scheme",
-	"main": "index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "engines": {
+    "node": ">=16"
+  },
+	"main": "idst/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "bugs": {
+    "url": "https://github.com/shovon/sss/issues"
+  },
+  "homepage": "https://github.com/shovon/sss#readme",
+  "publishConfig": {
+    "access": "public"
+  },
 	"scripts": {
 		"build": "tsc",
 		"clean": "rm -rf dist",
@@ -11,8 +32,13 @@
 		"pretty": "prettier . --write",
 		"test": "jest"
 	},
-	"author": "",
+  "keywords": ["sss", "secret-sharing"],
+	"author": "Sal Rahman <hey.to.sal@gmail.com>",
 	"license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shovon/sss.git"
+  },
 	"devDependencies": {
 		"@types/jest": "^29.5.14",
 		"jest": "^29.7.0",

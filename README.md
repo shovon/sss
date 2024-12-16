@@ -16,4 +16,8 @@ Shamir's Secret Sharing is a cryptographic algorithm that enables splitting a se
 
 This implementation works in finite fields to provide information-theoretic security.
 
-## Installation
+# Usage
+
+```typescript
+const modulus = 2n ** 127n - 1n;
+```
