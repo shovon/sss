@@ -1,3 +1,4 @@
+import { modPow, modulo } from "./bigint-math";
 import { lagrangePolynomial, polynomial } from "./finite-field-like";
 
 describe("polynomial", () => {
@@ -84,17 +85,45 @@ describe("lagrangePolynomial", () => {
 		expect(p(4n)).toBe(57n);
 	});
 
-	// it("should work with modular arithmetic", () => {
-	// 	const points: [bigint, bigint][] = [
-	// 		[1n, 2n],
-	// 		[2n, 3n],
-	// 		[3n, 4n],
-	// 	];
-	// 	const modulus = 5n;
-	// 	const p = lagrangePolynomial(points, modulus);
+	it("should work with modular arithmetic", () => {
+		const points: [bigint, bigint][] = [
+			[1n, 2n],
+			[2n, 3n],
+			[3n, 4n],
+		];
+		const modulus = 5n;
+		const p = lagrangePolynomial(points, modulus);
 
-	// 	// Results should be properly reduced modulo 5
-	// 	expect(p(4n)).toBe(0n);
-	// 	expect(p(5n)).toBe(2n); // 5 ≡ 0 (mod 5), so this is like p(0)
-	// });
+		// Results should be properly reduced modulo 5
+		expect(p(4n)).toBe(0n);
+		expect(p(5n)).toBe(1n); // 5 ≡ 0 (mod 5), so this is like p(0)
+	});
+
+	it("manual should work", () => {
+		const modulus = 5n;
+
+		const f = (x: bigint) => {
+			x = modulo(x, modulus);
+
+			const q12 = (x - 2n) * modPow(modulo(1n - 2n, modulus), -1n, modulus);
+			const q13 = (x - 3n) * modPow(modulo(1n - 3n, modulus), -1n, modulus);
+
+			const b1 = modulo(2n * q12 * q13, modulus);
+
+			const q21 = (x - 1n) * modPow(modulo(2n - 1n, modulus), -1n, modulus);
+			const q23 = (x - 3n) * modPow(modulo(2n - 3n, modulus), -1n, modulus);
+
+			const b2 = modulo(3n * q21 * q23, modulus);
+
+			const q31 = (x - 1n) * modPow(modulo(3n - 1n, modulus), -1n, modulus);
+			const q32 = (x - 2n) * modPow(modulo(3n - 2n, modulus), -1n, modulus);
+
+			const b3 = modulo(4n * q31 * q32, modulus);
+
+			return modulo(b1 + b2 + b3, modulus);
+		};
+
+		expect(f(4n)).toBe(0n);
+		expect(f(5n)).toBe(1n); // 5 ≡ 0 (mod 5), so this is like p(0)
+	});
 });

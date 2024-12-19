@@ -45,7 +45,7 @@ export const lagrangePolynomial = (
 			(x: bigint) =>
 				points.reduce((product, [xj], j) => {
 					if (i === j) return product;
-					const numerator = modulo(x - xj, modulus);
+					const numerator = x - xj;
 					const denominator = modPow(modulo(xi - xj, modulus), -1n, modulus);
 					return modulo(product * numerator * denominator, modulus);
 				}, yi)
@@ -53,7 +53,10 @@ export const lagrangePolynomial = (
 
 	return (x: bigint) =>
 		modulo(
-			lagrangeBases.reduce((sum, basis) => modulo(sum + basis(x), modulus), 0n),
+			lagrangeBases.reduce(
+				(sum, basis) => modulo(sum + basis(modulo(x, modulus)), modulus),
+				0n
+			),
 			modulus
 		);
 };
